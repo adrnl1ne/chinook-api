@@ -1,0 +1,54 @@
+<?php
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chinook API Tester</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; max-width: 900px; margin: 0 auto; }
+        h1 { color: #333; }
+        button { margin: 5px; padding: 8px 15px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #45a049; }
+        pre { background: #f5f5f5; padding: 10px; border-radius: 4px; max-height: 400px; overflow: auto; }
+    </style>
+</head>
+<body>
+    <h1>Chinook API Tester</h1>
+    <p>Click on an endpoint to test:</p>
+    
+    <div>
+        <button onclick="testEndpoint('status')">API Status</button>
+        <button onclick="testEndpoint('artists')">All Artists</button>
+        <button onclick="testEndpoint('albums')">All Albums</button>
+        <button onclick="testEndpoint('tracks')">All Tracks</button>
+        <button onclick="testEndpoint('genres')">All Genres</button>
+        <button onclick="testEndpoint('artists/1')">Artist ID=1</button>
+        <button onclick="testEndpoint('albums/1')">Album ID=1</button>
+    </div>
+    
+    <h2>Response:</h2>
+    <pre id="response">Response will appear here...</pre>
+    
+    <script>
+        function testEndpoint(endpoint) {
+            document.getElementById('response').textContent = 'Loading...';
+            
+            fetch(endpoint)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('response').textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    document.getElementById('response').textContent = `Error: ${error.message}`;
+                });
+        }
+    </script>
+</body>
+</html>

@@ -1,4 +1,14 @@
 RewriteEngine On
+
+# Handle direct access to PHP files
+<Files *.php>
+  Order Allow,Deny
+  Allow from all
+</Files>
+
+# Only rewrite if file doesn't exist
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php [QSA,L]
+
+# Simple rewrite rule for API endpoints
+RewriteRule ^(.*)$ index.php [L,QSA]
