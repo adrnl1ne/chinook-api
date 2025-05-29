@@ -76,20 +76,20 @@ class ArtistController extends BaseModel {
     }
     # Creates a new artist
     public function createArtist($data) {
-        if (empty($data['name'])) {
+        if (empty($data['Name'])) {
             Response::error('Artist name is required', 400);
             return;
         }
-        $data['name'] = htmlspecialchars($data['name']);
-        if (strlen($data['name']) > 120) {
+        $data['Name'] = htmlspecialchars($data['Name']);
+        if (strlen($data['Name']) > 120) {
             Response::error('Artist name must be less than 120 characters', 400);
             return;
         }
         try {
             $stmt = $this->db->prepare('INSERT INTO Artist (Name) VALUES (:name)');
-            $stmt->bindParam(':name', $data['name'], \PDO::PARAM_STR);
+            $stmt->bindParam(':name', $data['Name'], \PDO::PARAM_STR);
             if ($stmt->execute()) {
-                Response::send(['message' => 'Artist with name: '.$data['name'].' created successfully'], 200);
+                Response::send(['message' => 'Artist with name: '.$data['Name'].' created successfully'], 200);
             } else {
                 Response::error('Failed to create artist', 500);
             }
@@ -117,12 +117,12 @@ class ArtistController extends BaseModel {
     }
     # Updates an artist by ID
     public function updateArtist($id, $data) {
-        if (empty($data['name'])) {
+        if (empty($data['Name'])) {
             Response::error('Artist name is required', 400);
             return;
         }
-        $data['name'] = htmlspecialchars($data['name']);
-        if (strlen($data['name']) > 120) {
+        $data['Name'] = htmlspecialchars($data['Name']);
+        if (strlen($data['Name']) > 120) {
             Response::error('Artist name must be less than 120 characters', 400);
             return;
         }
@@ -132,7 +132,7 @@ class ArtistController extends BaseModel {
                 return;
             }
             $stmt = $this->db->prepare('UPDATE Artist SET Name = :name WHERE ArtistId = :id');
-            $stmt->bindParam(':name', $data['name'], \PDO::PARAM_STR);
+            $stmt->bindParam(':name', $data['Name'], \PDO::PARAM_STR);
             $stmt->bindParam(':id', $id, \PDO::PARAM_INT);
             if ($stmt->execute()) {
                 Response::send(['message' => 'Artist updated successfully'], 200);

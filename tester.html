@@ -7,33 +7,378 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chinook API Tester</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; max-width: 900px; margin: 0 auto; }
-        h1 { color: #333; }
-        button { margin: 5px; padding: 8px 15px; background: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; }
-        button:hover { background: #45a049; }
-        pre { background: #f5f5f5; padding: 10px; border-radius: 4px; max-height: 400px; overflow: auto; }
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            max-width: 1100px; 
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2 { color: #333; }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ccc;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background: #f5f5f5;
+            margin-right: 5px;
+            border-radius: 5px 5px 0 0;
+        }
+        .tab.active {
+            background: #4CAF50;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .endpoint-group {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            margin: 5px;
+            padding: 8px 15px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        button.delete {
+            background: #f44336;
+        }
+        button.delete:hover {
+            background: #d32f2f;
+        }
+        button.put {
+            background: #2196F3;
+        }
+        button.put:hover {
+            background: #0b7dda;
+        }
+        button.post {
+            background: #ff9800;
+        }
+        button.post:hover {
+            background: #e68a00;
+        }
+        input {
+            padding: 8px;
+            margin: 5px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        pre {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            max-height: 400px;
+            overflow: auto;
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-family: monospace;
+        }
+        .url-display {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            font-family: monospace;
+        }
     </style>
 </head>
 <body>
     <h1>Chinook API Tester</h1>
-    <p>Click on an endpoint to test:</p>
     
-    <div>
-        <button onclick="testEndpoint('status')">API Status</button>
-        <button onclick="testEndpoint('artists')">All Artists</button>
-        <button onclick="testEndpoint('albums')">All Albums</button>
-        <button onclick="testEndpoint('tracks')">All Tracks</button>
-        <button onclick="testEndpoint('genres')">All Genres</button>
-        <button onclick="testEndpoint('artists/1')">Artist ID=1</button>
-        <button onclick="testEndpoint('albums/1')">Album ID=1</button>
+    <div class="tabs">
+        <div class="tab active" onclick="showTab('get')">GET</div>
+        <div class="tab" onclick="showTab('post')">POST</div>
+        <div class="tab" onclick="showTab('put')">PUT</div>
+        <div class="tab" onclick="showTab('delete')">DELETE</div>
+        <div class="tab" onclick="showTab('custom')">Custom</div>
     </div>
+    
+    <!-- GET Endpoints -->
+    <div id="get" class="tab-content active">
+        
+        <div class="endpoint-group">
+            <h3>Artists</h3>
+            <button onclick="testEndpoint('artists')">All Artists</button>
+            <button onclick="testEndpoint('artists/1')">Artist ID=1</button>
+            <button onclick="testEndpoint('artists/2')">Artist ID=2</button>
+            <div>
+                <input type="number" id="artist-id" placeholder="Artist ID">
+                <button onclick="testEndpoint('artists/' + document.getElementById('artist-id').value)">Get Artist by ID</button>
+            </div>
+            <div>
+                <input type="text" id="artist-search" placeholder="Search term">
+                <button onclick="testEndpoint('artists?s=' + document.getElementById('artist-search').value)">Search Artists</button>
+            </div>
+        </div>
+        
+        <div class="endpoint-group">
+            <h3>Albums</h3>
+            <button onclick="testEndpoint('albums')">All Albums</button>
+            <button onclick="testEndpoint('albums/1')">Album ID=1</button>
+            <div>
+                <input type="number" id="album-id" placeholder="Album ID">
+                <button onclick="testEndpoint('albums/' + document.getElementById('album-id').value)">Get Album by ID</button>
+            </div>
+            <div>
+                <input type="number" id="artist-albums-id" placeholder="Artist ID">
+                <button onclick="testEndpoint('artists/' + document.getElementById('artist-albums-id').value + '/albums')">Get Albums by Artist ID</button>
+            </div>
+            <div>
+                <input type="text" id="album-search" placeholder="Search term">
+                <button onclick="testEndpoint('albums?s=' + document.getElementById('album-search').value)">Search Albums</button>
+            </div>
+        </div>
+        
+        <div class="endpoint-group">
+            <h3>Tracks</h3>
+            <button onclick="testEndpoint('tracks')">All Tracks</button>
+            <button onclick="testEndpoint('tracks/1')">Track ID=1</button>
+            <div>
+                <input type="number" id="track-id" placeholder="Track ID">
+                <button onclick="testEndpoint('tracks/' + document.getElementById('track-id').value)">Get Track by ID</button>
+            </div>
+            <div>
+                <input type="number" id="album-tracks-id" placeholder="Album ID">
+                <button onclick="testEndpoint('albums/' + document.getElementById('album-tracks-id').value + '/tracks')">Get Tracks by Album ID</button>
+            </div>
+            <div>
+                <input type="text" id="track-search" placeholder="Search term">
+                <button onclick="testEndpoint('tracks?s=' + document.getElementById('track-search').value)">Search Tracks</button>
+            </div>
+            <div>
+                <input type="text" id="composer-search" placeholder="Composer name">
+                <button onclick="testEndpoint('tracks?composer=' + document.getElementById('composer-search').value)">Find by Composer</button>
+            </div>
+        </div>
+        
+        <div class="endpoint-group">
+            <h3>Playlists</h3>
+            <button onclick="testEndpoint('playlists')">All Playlists</button>
+            <div>
+                <input type="number" id="playlist-id" placeholder="Playlist ID">
+                <button onclick="testEndpoint('playlists/' + document.getElementById('playlist-id').value)">Get Playlist by ID</button>
+            </div>
+            <div>
+                <input type="text" id="playlist-search" placeholder="Search term">
+                <button onclick="testEndpoint('playlists?s=' + document.getElementById('playlist-search').value)">Search Playlists</button>
+            </div>
+        </div>
+        
+        <div class="endpoint-group">
+            <h3>Others</h3>
+            <button onclick="testEndpoint('genres')">All Genres</button>
+            <button onclick="testEndpoint('mediatypes')">All Media Types</button>
+        </div>
+    </div>
+    
+    <!-- POST Endpoints -->
+    <div id="post" class="tab-content">
+        <div class="endpoint-group">
+            <h3>Create New Artist</h3>
+            <textarea id="post-artist-data">{
+  "Name": "New Test Artist"
+}</textarea>
+            <button class="post" onclick="sendRequest('POST', 'artists', document.getElementById('post-artist-data').value)">Create Artist</button>
+        </div>
+        
+        <div class="endpoint-group">
+            <h3>Create New Album</h3>
+            <textarea id="post-album-data">{
+  "Title": "New Test Album",
+  "ArtistId": 1
+}</textarea>
+            <button class="post" onclick="sendRequest('POST', 'albums', document.getElementById('post-album-data').value)">Create Album</button>
+        </div>
+        
+        <div class="endpoint-group">
+            <h3>Create New Track</h3>
+            <textarea id="post-track-data">{
+  "Name": "New Test Track",
+  "AlbumId": 1,
+  "MediaTypeId": 1,
+  "GenreId": 1,
+  "Composer": "Test Composer",
+  "Milliseconds": 180000,
+  "Bytes": 5000000,
+  "UnitPrice": 0.99
+}</textarea>
+            <button class="post" onclick="sendRequest('POST', 'tracks', document.getElementById('post-track-data').value)">Create Track</button>
+        </div>
+        
+        <div class="endpoint-group">
+            <h3>Create New Playlist</h3>
+            <textarea id="post-playlist-data">{
+  "Name": "New Test Playlist"
+}</textarea>
+            <button class="post" onclick="sendRequest('POST', 'playlists', document.getElementById('post-playlist-data').value)">Create Playlist</button>
+        </div>
+        
+        <div class="endpoint-group">
+            <h3>Add Track to Playlist</h3>
+            <div>
+                <input type="number" id="add-track-playlist-id" placeholder="Playlist ID">
+            </div>
+            <textarea id="add-track-data">{
+  "TrackId": 1
+}</textarea>
+            <button class="post" onclick="sendRequest('POST', 'playlists/' + document.getElementById('add-track-playlist-id').value + '/tracks', document.getElementById('add-track-data').value)">Add Track</button>
+        </div>
+    </div>
+    
+    <!-- PUT Endpoints -->
+    <div id="put" class="tab-content">
+        <div class="endpoint-group">
+            <h3>Update Artist</h3>
+            <div>
+                <input type="number" id="update-artist-id" placeholder="Artist ID">
+            </div>
+            <textarea id="put-artist-data">{
+  "Name": "Updated Artist Name"
+}</textarea>
+            <button class="put" onclick="sendRequest('PUT', 'artists/' + document.getElementById('update-artist-id').value, document.getElementById('put-artist-data').value)">Update Artist</button>
+        </div>
+        
+        <div class="endpoint-group">
+            <h3>Update Album</h3>
+            <div>
+                <input type="number" id="update-album-id" placeholder="Album ID">
+            </div>
+            <textarea id="put-album-data">{
+  "Title": "Updated Album Title",
+  "ArtistId": 1
+}</textarea>
+            <button class="put" onclick="sendRequest('PUT', 'albums/' + document.getElementById('update-album-id').value, document.getElementById('put-album-data').value)">Update Album</button>
+        </div>
+        
+        <div class="endpoint-group">
+            <h3>Update Track</h3>
+            <div>
+                <input type="number" id="update-track-id" placeholder="Track ID">
+            </div>
+            <textarea id="put-track-data">{
+  "Name": "Updated Track Name",
+  "Composer": "Updated Composer",
+  "UnitPrice": 1.29
+}</textarea>
+            <button class="put" onclick="sendRequest('PUT', 'tracks/' + document.getElementById('update-track-id').value, document.getElementById('put-track-data').value)">Update Track</button>
+        </div>
+    </div>
+    
+    <!-- DELETE Endpoints -->
+    <div id="delete" class="tab-content">
+        <div class="endpoint-group">
+            <h3>Delete Artist</h3>
+            <div>
+                <input type="number" id="delete-artist-id" placeholder="Artist ID">
+                <button class="delete" onclick="sendRequest('DELETE', 'artists/' + document.getElementById('delete-artist-id').value)">Delete Artist</button>
+            </div>
+        </div>
+        
+        <div class="endpoint-group">
+            <h3>Delete Album</h3>
+            <div>
+                <input type="number" id="delete-album-id" placeholder="Album ID">
+                <button class="delete" onclick="sendRequest('DELETE', 'albums/' + document.getElementById('delete-album-id').value)">Delete Album</button>
+            </div>
+        </div>
+        
+        <div class="endpoint-group">
+            <h3>Delete Track</h3>
+            <div>
+                <input type="number" id="delete-track-id" placeholder="Track ID">
+                <button class="delete" onclick="sendRequest('DELETE', 'tracks/' + document.getElementById('delete-track-id').value)">Delete Track</button>
+            </div>
+        </div>
+        
+        <div class="endpoint-group">
+            <h3>Delete Playlist</h3>
+            <div>
+                <input type="number" id="delete-playlist-id" placeholder="Playlist ID">
+                <button class="delete" onclick="sendRequest('DELETE', 'playlists/' + document.getElementById('delete-playlist-id').value)">Delete Playlist</button>
+            </div>
+        </div>
+        
+        <div class="endpoint-group">
+            <h3>Remove Track from Playlist</h3>
+            <div>
+                <input type="number" id="remove-playlist-id" placeholder="Playlist ID">
+                <input type="number" id="remove-track-id" placeholder="Track ID">
+                <button class="delete" onclick="sendRequest('DELETE', 'playlists/' + document.getElementById('remove-playlist-id').value + '/tracks/' + document.getElementById('remove-track-id').value)">Remove Track</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Custom Request Tab -->
+    <div id="custom" class="tab-content">
+        <div class="endpoint-group">
+            <h3>Custom Request</h3>
+            <div>
+                <select id="custom-method">
+                    <option value="GET">GET</option>
+                    <option value="POST">POST</option>
+                    <option value="PUT">PUT</option>
+                    <option value="DELETE">DELETE</option>
+                </select>
+                <input type="text" id="custom-endpoint" placeholder="Endpoint path (e.g., artists/1)" style="width: 300px;">
+            </div>
+            <div>
+                <textarea id="custom-data" placeholder="Request body (for POST/PUT)">{}</textarea>
+            </div>
+            <button onclick="sendCustomRequest()">Send Request</button>
+        </div>
+    </div>
+    
+    <h2>Request URL:</h2>
+    <div class="url-display" id="request-url">No request sent yet</div>
     
     <h2>Response:</h2>
     <pre id="response">Response will appear here...</pre>
     
     <script>
+        function showTab(tabId) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Deactivate all tabs
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabId).classList.add('active');
+            
+            // Activate selected tab
+            event.target.classList.add('active');
+        }
+        
         function testEndpoint(endpoint) {
             document.getElementById('response').textContent = 'Loading...';
+            document.getElementById('request-url').textContent = endpoint;
             
             fetch(endpoint)
                 .then(response => {
@@ -48,6 +393,49 @@
                 .catch(error => {
                     document.getElementById('response').textContent = `Error: ${error.message}`;
                 });
+        }
+        
+        function sendRequest(method, endpoint, data) {
+            document.getElementById('response').textContent = 'Loading...';
+            document.getElementById('request-url').textContent = `${method} ${endpoint}`;
+            
+            const options = {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+            
+            if (data && (method === 'POST' || method === 'PUT')) {
+                options.body = data;
+            }
+            
+            fetch(endpoint, options)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('response').textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    document.getElementById('response').textContent = `Error: ${error.message}`;
+                });
+        }
+        
+        function sendCustomRequest() {
+            const method = document.getElementById('custom-method').value;
+            const endpoint = document.getElementById('custom-endpoint').value;
+            const data = document.getElementById('custom-data').value;
+            
+            if (!endpoint) {
+                document.getElementById('response').textContent = 'Error: Endpoint is required';
+                return;
+            }
+            
+            sendRequest(method, endpoint, data);
         }
     </script>
 </body>
