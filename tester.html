@@ -1,5 +1,3 @@
-<?php
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -399,30 +397,76 @@
             document.getElementById('response').textContent = 'Loading...';
             document.getElementById('request-url').textContent = `${method} ${endpoint}`;
             
-            const options = {
-                method: method,
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            };
+            let finalEndpoint = endpoint;
+            let jsonData = data;
             
-            if (data && (method === 'POST' || method === 'PUT')) {
-                options.body = data;
-            }
-            
-            fetch(endpoint, options)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
+            // For PUT/DELETE requests, convert to POST with _method parameter
+            if (method === 'PUT' || method === 'DELETE') {
+                // Add method as query parameter
+                finalEndpoint = finalEndpoint + (finalEndpoint.includes('?') ? '&' : '?') + '_method=' + method;
+                
+                // Parse and modify JSON data to include _method
+                if (data) {
+                    try {
+                        let dataObj = JSON.parse(data);
+                        dataObj._method = method;
+                        jsonData = JSON.stringify(dataObj);
+                    } catch (e) {
+                        // If not valid JSON, create a new object
+                        jsonData = JSON.stringify({ _method: method });
                     }
-                    return response.json();
-                })
-                .then(data => {
-                    document.getElementById('response').textContent = JSON.stringify(data, null, 2);
-                })
-                .catch(error => {
-                    document.getElementById('response').textContent = `Error: ${error.message}`;
-                });
+                } else {
+                    jsonData = JSON.stringify({ _method: method });
+                }
+                
+                const options = {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: jsonData
+                };
+                
+                fetch(finalEndpoint, options)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        document.getElementById('response').textContent = JSON.stringify(data, null, 2);
+                    })
+                    .catch(error => {
+                        document.getElementById('response').textContent = `Error: ${error.message}`;
+                    });
+            } else {
+                // Regular GET/POST
+                const options = {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                };
+                
+                if (data && method === 'POST') {
+                    options.body = data;
+                }
+                
+                fetch(finalEndpoint, options)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        document.getElementById('response').textContent = JSON.stringify(data, null, 2);
+                    })
+                    .catch(error => {
+                        document.getElementById('response').textContent = `Error: ${error.message}`;
+                    });
+            }
         }
         
         function sendCustomRequest() {

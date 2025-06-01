@@ -5,3 +5,12 @@
 2025-06-01T22:57:32+02:00 Method: GET, URI: /playlists, Body: , Status: 200
 2025-06-01T22:57:34+02:00 Method: GET, URI: /genres, Body: , Status: 200
 2025-06-01T22:57:34+02:00 Method: GET, URI: /mediatypes, Body: , Status: 200
+2025-06-01T23:54:26+02:00 Method: GET, URI: /artists, Body: , Status: 200
+2025-06-01T23:54:33+02:00 Method: GET, URI: /artists, Body: , Status: 200
+2025-06-01T23:54:36+02:00 Method: GET, URI: /artists, Body: , Status: 200
+2025-06-01T23:54:40+02:00 Method: POST, URI: /artists, Body: {  "Name": "New Test Artist"}, Status: 200
+2025-06-01T23:54:42+02:00 Method: GET, URI: /artists, Body: , Status: 200
+2025-06-01T23:54:50+02:00 Method: POST, URI: /artists/277, Body: {"Name":"Updated Artist Name","_method":"PUT"}, Status: 200
+2025-06-01T23:54:56+02:00 Method: GET, URI: /artists/277, Body: , Status: 200
+2025-06-01T23:55:02+02:00 Method: POST, URI: /artists/277, Body: {"_method":"DELETE"}, Status: 200
+2025-06-01T23:55:08+02:00 Method: POST, URI: /albums, Body: {  "Title": "New Test Album",  "ArtistId": 1}, Status: 200

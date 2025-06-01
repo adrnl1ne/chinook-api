@@ -3,10 +3,20 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-header('Content-Type: application/json');
+// Handle OPTIONS requests for CORS preflight
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    header("Access-Control-Allow-Origin: *");
+    header("Access-Control-Allow-Methods: GET, POST");  // Only list methods that are actually allowed
+    header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+    header("Access-Control-Max-Age: 86400");
+    exit(0);
+}
+
+// For all other requests
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Methods: GET, POST");  // Only list methods that are actually allowed
+header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+header('Content-Type: application/json');
 
 require_once __DIR__ . '/src/Controllers/ArtistController.php';
 require_once __DIR__ . '/src/Controllers/AlbumController.php';
