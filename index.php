@@ -33,7 +33,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri = preg_replace('%^'.dirname($_SERVER['PHP_SELF']).'%', '', $uri);
 $uri = '/'.ltrim($uri, '/');
-// Fix all the route patterns by removing leading slashes
+
 $router->addRoute('GET', '%^/artists$%', function() {
     $controller = new ArtistController();
     if (isset($_GET['s'])) {
@@ -82,7 +82,7 @@ $router->addRoute('GET', '%^/playlists$%', function() {
     }
 });
 
-// ID-based routes - fix all patterns
+// ID-based routes
 $router->addRoute('GET', '%^/artists/(\d+)$%', function($id) {
     $controller = new ArtistController();
     return $controller->getById($id);
@@ -190,4 +190,7 @@ $router->addRoute('DELETE', '%^/albums/(\d+)$%', function($id) {
 });
 
 $router->dispatch($method, $uri);
+
+// Debug: Log method, URI, and endpointAdd commentMore actions
+file_put_contents('debug.txt', "\n".date("c")." Method: $method, URI: $uri, Body: ".str_replace("\n" , "", file_get_contents('php://input')).", Status: ".http_response_code(), FILE_APPEND);
 ?>
