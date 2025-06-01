@@ -1,0 +1,10 @@
+# Ignore database configuration file
+config/database.php
+
+# Common files to ignore
+vendor/
+.env
+.vscode/
+.idea/
+node_modules/
+*.log

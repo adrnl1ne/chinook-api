@@ -16,4 +16,5 @@ return [
     'password' => 'Nikolaj#14', // Your MySQL password (empty if none)
     'charset' => 'utf8mb4',
 ];
+
 ?>
